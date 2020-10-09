@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <!--开启SpringMVC注解模式-->
+    <mvc:annotation-driven/>
+    
+    <mvc:default-servlet-handler/>
+
+    <!--在springmvc配置文件配置静态资源的访问路径html/chat.html-->
+
+    <!--<mvc:resources location="/css/" mapping="/css/**"/>-->
+    <!--<mvc:resources location="classpath:static/html/" mapping="/*.html"/>
+    <mvc:resources location="classpath:static/css/" mapping="/*.css"/>-->
+
+    <mvc:resources mapping="/**/*.css" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.js" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.jpg" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.svg" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.ttf" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.woff" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.html" location="classpath:static/"/>
+    <mvc:resources mapping="/**/*.png" location="classpath:static/"/>
+   <!-- <mvc:resources location="classpath:static/css/" mapping="/*.*"/>-->
+    <!--配置jsp 显示ViewResolver-->
+
+
+
+    <!--配置拦截器-->
+    <!--<mvc:interceptors>-->
+
+    <!--</mvc:interceptors>-->
+    <!--扫描web相关的bean-->
+    <context:component-scan base-package="com.luorifeiche.controller"/>
+
+</beans>

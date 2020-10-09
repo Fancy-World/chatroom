@@ -1,0 +1,176 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>私信</title>
+    <link rel="stylesheet" href="http://localhost:8080/chatroom/css/semantic.min.css">
+    <link rel="stylesheet" href="http://localhost:8080/chatroom/css/chat.css">
+    <script type="text/javascript" src="http://localhost:8080/chatroom/js/jquery.js"></script>
+    <script type="text/javascript" src="http://localhost:8080/chatroom/js/semantic.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //当用户第一次访问本页或者刷新本页时，生成id
+            //引导用户输入名字
+            $("#inputname").hide();
+            $("#cover").hide();
+            var id = parseInt(Math.random()*100);
+            var name = "";
+            var index = -1;
+            //点击发送，发送信息
+            $("#send").click(function () {
+                if(name === ""){
+                    alert("请输入名称");
+                    $("#cover").show();
+                    $("#inputname").show();
+                    return;
+                }
+                var text = $("textarea").val();
+                if (text == "") {
+                    alert("说些什么吧");
+                } else {
+                    console.log(text);
+                    var content = $("textarea").val();
+                    $.ajax({
+                        //https://book.feelyou.top/search/
+                        url: "http://localhost:8080/chatroom/send?name=" + name + "&content=" + content +"&uid=" + id ,
+                        async: true,
+                        dataType: "json",
+                        success: function (data) {
+                            console.log(data);
+
+                        }
+                    })
+                    $("textarea").val("");
+                    getMessage();
+                }
+            });
+
+            //每隔一段时间从服务器获取数据
+            function getMessage(){
+                $.ajax({
+                    url:"http://localhost:8080/chatroom/get?index="+index,
+                    async:false,
+                    dataType: "json",
+                    success: function(data){
+                        if(data != undefined && data != null && data.length != 0){
+
+                            index = data.length + index;
+                            for(var i = 0 ; i <data.length ; i++){
+                                console.log(data[i]);
+                                createCard(data[i]);
+                            }
+                        }
+                    }
+                })
+            }
+
+            //刷新时执行getMessage();
+            getMessage();
+            setInterval(getMessage,1000);
+
+            //getMessage();
+            //提交名字的函数
+            $("#tijiao").click(function(){
+                var text = $("#nameinput").val();
+                name = text;
+                $("#inputname").hide();
+                $("#cover").hide();
+            });
+
+            /**
+             * <div class="chat-not-me">
+                    <div class="others-name">新垣结衣</div>
+                    <div class="chat-words">
+             亲爱的，晚上早点回来呦😊
+                    </div>
+               </div>
+             * @param text
+             */
+            //制作信息的函数
+            function createCard(obj) {
+                var tempObj = JSON.parse(obj);
+
+                var chat = document.createElement("div");
+                var userName = document.createElement("div");
+                var chatWords = document.createElement("div");
+                if(tempObj.uid === id){
+                    chat.className = "chat-me";
+                    userName.className = "myname";
+                    chatWords.className = "my-chat-words";
+                } else {
+                    chat.className = "chat-not-me";
+                    userName.className = "others-name"
+                    chatWords.className = "chat-words";
+                }
+
+                userName.innerText = tempObj.name;
+                chatWords.innerText = tempObj.content;
+
+                chat.appendChild(userName);
+                chat.appendChild(chatWords);
+
+
+                //插入
+                var chatContent = document.getElementsByClassName("chat-content")[0];
+                chatContent.appendChild(chat);
+                //div.scrollTop = div.scrollHeight;
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }
+
+            //回车发送
+            $("textarea").keypress(function (event) {
+                if (event.which === 13) {
+                    if ($("textarea").val() == "") {
+                        alert("说些什么吧");
+                    } else {
+                        $("#send").click();
+                    }
+                }
+                return false;
+            })
+        });
+    </script>
+</head>
+
+<body>
+
+    <div id="cover">
+
+    </div>
+    <!-- 输入名字的框框 -->
+    <div id="inputname">
+        <div style="margin-top:10px;margin-left:16px;font-size:16px;">
+            请输入昵称
+        </div>
+        <div class="ui input focus" style="margin-left:20px;margin-top:20px;">
+            <input type="text" placeholder="输入昵称.." id="nameinput">
+            <button class="ui  button" style="margin-left:15px;display: inline;" id="tijiao">提交</button>
+        </div>
+        
+    </div>
+
+    <!-- 分割线 -->
+    <div style="height:20px;">
+
+    </div>
+    <div class="chat-window">
+        <div class="chat-title">
+            <span>阿巴阿巴聊天室</span>
+        </div>
+        <div class="chat-content">
+            <div class="chat-time">
+                <span>2020年9月28日</span>
+            </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="my-send">
+            <textarea rows="2" class="textarea" placeholder="说些什么吧"></textarea>
+            <div class="send-button">
+                <button class="ui primary button send-it" id="send">发送</button>
+                <span class="send-it-text"></span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
